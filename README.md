@@ -28,3 +28,13 @@ EXAMPLE
                     qDebug() << "error: " << error;
                 }).post(request);
 ```
+
+
+TODO
+----
+
+- Add support to SSL
+- Test GET and PUT
+- Add support to routes
+- Add a simple stub generator to create json rpc clients automagically (or other kind of rpc clients based on HTTP)
+
