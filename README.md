@@ -1,6 +1,6 @@
 # GoGo40-Qt-REST-API-Client
 
-This is a small api using Qt Network Manager to create HTTP requests. The library is implemented as an fluent api.
+This is a small api using Qt Network Manager to create HTTP requests. The library is implemented as a fluent api.
 
 EXAMPLE
 -------
