@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     request.insert("cmd", "hd");
     request.insert("args", args);
 
-    static const std::vector<QString> status = {"ERROR", "RUNNING", "FINISHED", "UNDEFINED", "TIMEOUT"};
+    const std::vector<const char*> status = {"ERROR", "RUNNING", "FINISHED", "UNDEFINED", "TIMEOUT"};
     enum process_status { ERROR = 0, RUNNING = 1, FINISHED = 2, UNDEFINED = 3, TIMEOUT = 4 };
 
     client.set_reply_callback(
@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
                             qDebug() << r;
                             return;
                         }
+                        qDebug() << "status: " << status[s];
                     } else if (r.contains("id")) {
                         res.insert("status", a);
                     }
