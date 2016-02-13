@@ -37,9 +37,9 @@ public:
 
     void set_url(const QUrl& url);
 
-    void set_reply_callback(reply_callback callback);
+    void on_result(reply_callback callback);
 
-    void set_error_callback(error_callback callback);
+    void on_error(error_callback callback);
 
     void add_query_item(const QString& item, const QString& value);
 

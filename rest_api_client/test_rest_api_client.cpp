@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     const std::vector<const char*> status = {"ERROR", "RUNNING", "FINISHED", "UNDEFINED", "TIMEOUT"};
     enum process_status { ERROR = 0, RUNNING = 1, FINISHED = 2, UNDEFINED = 3, TIMEOUT = 4 };
 
-    client.set_reply_callback(
+    client.on_result(
                 [&client, &status](const QByteArray& response) {
                     QJsonObject r = std::move(QJsonDocument::fromJson(response).object());
                     QJsonObject res;
@@ -73,11 +73,11 @@ int main(int argc, char *argv[])
                         res.insert("status", a);
                     }
 
-                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
                     client.post(res);
 
-                }).set_error_callback(
+                }).on_error(
                 [](const QString& error) {
                     qDebug() << "ERROR: " << error;
                 }).post(request);

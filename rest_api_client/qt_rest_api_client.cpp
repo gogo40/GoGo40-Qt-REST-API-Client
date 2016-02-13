@@ -38,11 +38,11 @@ void rest_api_client_impl::set_url(const QUrl &url) {
     request_.setUrl(url);
 }
 
-void rest_api_client_impl::set_reply_callback(reply_callback callback) {
+void rest_api_client_impl::on_result(reply_callback callback) {
     reply_callback_ = callback;
 }
 
-void rest_api_client_impl::set_error_callback(error_callback callback) {
+void rest_api_client_impl::on_error(error_callback callback) {
     error_callback_ = callback;
 }
 

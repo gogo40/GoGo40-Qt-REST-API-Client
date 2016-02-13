@@ -50,8 +50,8 @@ public:
 
     void clear();
 
-    rest_api_client& set_reply_callback(reply_callback callback);
-    rest_api_client& set_error_callback(error_callback callback);
+    rest_api_client& on_result(reply_callback callback);
+    rest_api_client& on_error(error_callback callback);
 
 private:
     rest_api_client_impl* impl_ = nullptr;

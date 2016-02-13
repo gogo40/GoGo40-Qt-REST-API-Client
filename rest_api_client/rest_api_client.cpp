@@ -95,15 +95,15 @@ void rest_api_client::clear()
     impl_->clear();
 }
 
-rest_api_client &rest_api_client::set_reply_callback(reply_callback callback)
+rest_api_client &rest_api_client::on_result(reply_callback callback)
 {
-    impl_->set_reply_callback(callback);
+    impl_->on_result(callback);
     return *this;
 }
 
-rest_api_client &rest_api_client::set_error_callback(error_callback callback)
+rest_api_client &rest_api_client::on_error(error_callback callback)
 {
-    impl_->set_error_callback(callback);
+    impl_->on_error(callback);
     return *this;
 }
 
