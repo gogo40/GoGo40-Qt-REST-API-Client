@@ -32,14 +32,25 @@ enum process_status { ERROR = -1, RUNNING = 1, FINISHED = 2, UNDEFINED = 3, TIME
 
 class remote_call {
 public:
-    remote_call(const char* host, const QString& s,
+    remote_call(const char* host, size_t test_size,
                 const std::chrono::time_point<std::chrono::steady_clock>& start)
-        : client_(host), s_(s), start_(start) {
+        : client_(host), s_(""), start_(start) {
+        for (int i = 0; i < test_size; ++i) {
+            s_ += 'a' + std::rand() % ('z' - 'a');
+        }
     }
 
     virtual ~remote_call() {}
 
-    void call(const QJsonObject& request) {
+    void call() {
+        QJsonObject args;
+        QJsonObject request;
+
+        args.insert("str", s_);
+
+        request.insert("cmd", "echo");
+        request.insert("args", args);
+
         client_.on_result(
                     [=](const QByteArray& response) {
             QJsonObject r = std::move(QJsonDocument::fromJson(response).object());
@@ -94,12 +105,10 @@ public:
 private:
     int id_ = -1;
     gogo40_rest_api_client::rest_api_client client_;
-    const QString& s_;
-    static bool is_first_;
+    QString s_;
     const std::chrono::time_point<std::chrono::steady_clock>& start_;
 };
 
-bool remote_call::is_first_ = true;
 
 int main(int argc, char *argv[])
 {
@@ -107,21 +116,8 @@ int main(int argc, char *argv[])
 
     QCoreApplication a(argc, argv);
 
-    QJsonObject request;
-    QJsonObject args;
-
-    QString s;
     size_t t = 40000000; // 10 MB
     size_t n_run = 5; //
-    for (int i = 0; i < t; ++i) {
-        s += 'a' + std::rand() % ('z' - 'a');
-    }
-
-    args.insert("str", s);
-
-    request.insert("cmd", "echo");
-    request.insert("args", args);
-
 
     auto start = std::chrono::steady_clock::now();
 
@@ -129,8 +125,8 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < n_run; ++i) {
         qDebug() << "run " << i << "\n";
-        calls.push_back(std::shared_ptr<remote_call>(new remote_call(DEFAULT_HOST, s, start)));
-        calls.at(i)->call(request);
+        calls.push_back(std::shared_ptr<remote_call>(new remote_call(DEFAULT_HOST, t, start)));
+        calls.at(i)->call();
     }
 
     return a.exec();
