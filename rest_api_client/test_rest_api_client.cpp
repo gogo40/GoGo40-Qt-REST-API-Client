@@ -20,6 +20,7 @@ Copyright 2016 Péricles Lopes Machado (eu [at] gogo40.com)
 #include <chrono>
 #include <ctime>
 #include <cstdlib>
+#include <memory>
 
 #include "rest_api_client.h"
 
@@ -33,7 +34,7 @@ enum process_status { ERROR = -1, RUNNING = 1, FINISHED = 2, UNDEFINED = 3, TIME
 class remote_call {
 public:
     remote_call(const char* host, size_t test_size,
-                const std::chrono::time_point<std::chrono::steady_clock>& start)
+                const std::chrono::time_point<std::chrono::system_clock>& start)
         : client_(host), s_(""), start_(start) {
         for (int i = 0; i < test_size; ++i) {
             s_ += 'a' + std::rand() % ('z' - 'a');
@@ -69,9 +70,10 @@ public:
                         .toString());
                 bool ok = (result == s_);
                 qDebug() << "result:" << ((ok)?"ok":"n_ok") << " id:" << id_;
-                auto end = std::chrono::steady_clock::now();
-                auto diff = end - start_;
-                qDebug() << "dt: " << std::chrono::duration<double>(diff).count() << " s\n";
+                using namespace std::chrono;
+                auto end = std::chrono::system_clock::now();
+                auto diff = duration_cast<milliseconds>(end - start_);
+                qDebug() << "dt: " << diff.count() << " ms\n";
                 return;
             } else if (r.contains("status")) {
                 int s = r["status"].toInt();
@@ -106,7 +108,7 @@ private:
     int id_ = -1;
     gogo40_rest_api_client::rest_api_client client_;
     QString s_;
-    const std::chrono::time_point<std::chrono::steady_clock>& start_;
+    const std::chrono::time_point<std::chrono::system_clock>& start_;
 };
 
 
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
     size_t t = 40000000; // 10 MB
     size_t n_run = 5; //
 
-    auto start = std::chrono::steady_clock::now();
+    auto start = std::chrono::system_clock::now();
 
     std::vector<std::shared_ptr<remote_call>> calls;
 
